@@ -2,238 +2,124 @@
 #include <stdlib.h>
 #pragma warning(disable:4996)
 #pragma warning(disable:6011)
-#include <time.h> // ½ÇÇà½Ã°£ ÃøÁ¤¿ë
 
 typedef struct node {
-	int key;
-	struct node* left;
-	struct node* right;
+	long long key;
+	struct node* link;
 } Node;
-// Æ®¸®·Î »ç¿ë ÇÒ ³ëµå
 
-void make_clean_tree(Node** h, int tmp); // Æ®¸®ÀÇ Çìµå¸¦ »ı¼ºÇÏ´Â ÇÔ¼ö
-void insert_node_small_root(Node* h, int tmp); // tmp¸¦ Å°°ªÀ¸·Î °¡Áö´Â ³ëµå¸¦ Æ®¸®¿¡ »ğÀÔÇÏ´Â ÇÔ¼ö
-void insert_node_big_root(Node* h, int tmp); // tmp¸¦ Å°°ªÀ¸·Î °¡Áö´Â ³ëµå¸¦ Æ®¸®¿¡ »ğÀÔÇÏ´Â ÇÔ¼ö
-// small : ¿ìÃøÆíÇâÀÏ ¶§ ºü¸¥ »ğÀÔ, big : ÁÂÃøÆíÇâÀÏ ¶§ ºü¸¥ »ğÀÔ
-void search(Node* h, int tmp); // ÀÎÇ²¹ŞÀº tmp¸¦ °Ë»öÇÏ´Â ÇÔ¼ö
+void make_linked_list(Node** h);
+int check_linked_list(Node* h, long long key);
+void insert_linked_list(Node* h, long long key);
 
-/* ½Ã°£ ÃøÁ¤ ±âÁØÀÌ ¸í½ÃµÇ¾î ÀÖÁö ¾Ê¾Æ °¢ ±â´ÉÀº »ç¿ë Á÷Àü »ı¼ºÇÏ´Â ¹æÇâÀ¸·Î Çß½À´Ï´Ù. */
-/* °°Àº ÀÌÀ¯·Î Æ®¸® ÃÊ±âÈ­³ª ÆÄÀÏ Á¾·á µî ´Ù¸¥ ±â´É ¶ÇÇÑ »ç¿ëÇÏÁö ¾Ê¾Ò½À´Ï´Ù.*/
+int over_Fk = 0;
+int node_cnt = 0;
+int aaa = 0;
+int bbb = 0;
 
 int main(void)
 {
-	double start, end; // ½ÇÇà½Ã°£ ÃøÁ¤¿ë
-	start = (double)clock() / CLOCKS_PER_SEC; // ½ÇÇà½Ã°£ ÃøÁ¤¿ë
-	FILE* pFile = fopen("input.txt", "r"); //read mode 
+	FILE* fp = fopen("input.txt", "r");
 
-	if (pFile == NULL)
+	if (fp == NULL)
 	{
 		printf("File does not exist");
 		return 0;
-	} //ÆÄÀÏ ¾øÀ» ½Ã Á¾·á
+	} //íŒŒì¼ ì—†ì„ ì‹œ ì¢…ë£Œ
 
-	int num[2] = { 0 };
 
-	int intTemp = -1; // ÅØ½ºÆ® ÆÄÀÏ¿¡¼­ Á¤¼ö¸¦ ÀÓ½ÃÀúÀå ÈÄ ³Ñ°ÜÁÖ´Â º¯¼ö
-	Node* head = NULL; // Çìµå³ëµå
+	long long intTemp = -1; // í…ìŠ¤íŠ¸ íŒŒì¼ì—ì„œ ì •ìˆ˜ë¥¼ ì„ì‹œì €ì¥ í›„ ë„˜ê²¨ì£¼ëŠ” ë³€ìˆ˜
+	Node* head = NULL; // í—¤ë“œë…¸ë“œ
 
-	// ÆÄÀÏ ÀĞ±â ¼º°ø
+	make_linked_list(&head);
 
-	//for(int i = 0; i<2; i++)
-
-	fscanf_s(pFile, "%d", &intTemp); // ÆÄÀÏ¿¡¼­ Á¤¼öÇüÀ» intTemp¿¡ ÀúÀå
-	num[0] = intTemp;
-	if (intTemp == -1) // ÆÄÀÏ ¸¶Áö¸· ¿ä¼Ò°¡ -1ÀÌ±â ¶§¹®¿¡ -1ÀÌ ³ª¿À¸é Á¾·á
+	int count = 0;
+	long long Fk = 5000;
+	//int preTemp = 0;
+	while (1)
 	{
-		printf("Ã¹ °ªÀÌ -1 ÀÔ´Ï´Ù.");
-		return 0;
+		if (fscanf_s(fp, "%lld", &intTemp) == EOF)
+			break;
+		printf("%lld", intTemp);
+		insert_linked_list(head, intTemp);
+		
+		if (intTemp > Fk)
+			over_Fk++;
+		printf("\t%d", node_cnt);
+		printf("\t%d", over_Fk);
+		count++;
+		printf("\t%d\n", count);
+		
 	}
-	make_clean_tree(&head, intTemp); // Çìµå³ëµå Æ®¸®ÇüÅÂ·Î ÃÊ±âÈ­
+	printf("The total number of nodes: %d\n", node_cnt);
+	printf("More than 5000 values: %d\n", over_Fk);
 
-	fscanf_s(pFile, "%d", &intTemp); // ÆÄÀÏ¿¡¼­ Á¤¼öÇüÀ» intTemp¿¡ ÀúÀå
-	num[1] = intTemp;
-	if (intTemp == -1) // ÆÄÀÏ ¸¶Áö¸· ¿ä¼Ò°¡ -1ÀÌ±â ¶§¹®¿¡ -1ÀÌ ³ª¿À¸é Á¾·á
-	{
-		printf("Ã¹ °ªÀÌ -1 ÀÔ´Ï´Ù.");
-		return 0;
-	}
-	insert_node_small_root(head, intTemp); // Æ®¸®¿¡ intTemp»ğÀÔ
-	if (num[0] > num[1])
-	{
-		if ((num[0] / num[1]) >= 2)
-			while (1)
-			{
-				fscanf_s(pFile, "%d", &intTemp); // ÆÄÀÏ¿¡¼­ Á¤¼öÇüÀ» intTemp¿¡ ÀúÀå
-				if (intTemp == -1) // ÆÄÀÏ ¸¶Áö¸· ¿ä¼Ò°¡ -1ÀÌ±â ¶§¹®¿¡ -1ÀÌ ³ª¿À¸é Á¾·á
-					break;
-				insert_node_small_root(head, intTemp); // Æ®¸®¿¡ intTemp»ğÀÔ
-			}
-		else
-			while (1)
-			{
-				fscanf_s(pFile, "%d", &intTemp); // ÆÄÀÏ¿¡¼­ Á¤¼öÇüÀ» intTemp¿¡ ÀúÀå
-				if (intTemp == -1) // ÆÄÀÏ ¸¶Áö¸· ¿ä¼Ò°¡ -1ÀÌ±â ¶§¹®¿¡ -1ÀÌ ³ª¿À¸é Á¾·á
-					break;
-				insert_node_big_root(head, intTemp); // Æ®¸®¿¡ intTemp»ğÀÔ
-			}
-	}
-	else
-	{
-		if ((num[1] / num[0]) >= 3 / 2)
-			while (1)
-			{
-				fscanf_s(pFile, "%d", &intTemp); // ÆÄÀÏ¿¡¼­ Á¤¼öÇüÀ» intTemp¿¡ ÀúÀå
-				if (intTemp == -1) // ÆÄÀÏ ¸¶Áö¸· ¿ä¼Ò°¡ -1ÀÌ±â ¶§¹®¿¡ -1ÀÌ ³ª¿À¸é Á¾·á
-					break;
-				insert_node_small_root(head, intTemp); // Æ®¸®¿¡ intTemp»ğÀÔ
-			}
-		else
-			while (1)
-			{
-				fscanf_s(pFile, "%d", &intTemp); // ÆÄÀÏ¿¡¼­ Á¤¼öÇüÀ» intTemp¿¡ ÀúÀå
-				if (intTemp == -1) // ÆÄÀÏ ¸¶Áö¸· ¿ä¼Ò°¡ -1ÀÌ±â ¶§¹®¿¡ -1ÀÌ ³ª¿À¸é Á¾·á
-					break;
-				insert_node_big_root(head, intTemp); // Æ®¸®¿¡ intTemp»ğÀÔ
-			}
-	}
-
-	end = (((double)clock()) / CLOCKS_PER_SEC); // ½ÇÇà½Ã°£ ÃøÁ¤¿ë
-	printf("ÇÁ·Î±×·¥ ¼öÇà ½Ã°£ :%lf\n", (end - start)); // ½ÇÇà½Ã°£ ÃøÁ¤¿ë
-
-	printf("°Ë»öÇÒ °ªÀ» ÀÔ·ÂÇÏ¼¼¿ä : ");
-	scanf_s("%d", &intTemp);
-	search(head, intTemp);
-	// »ç¿ëÀÚ·ÎºÎÅÍ °ªÀ» ÀÎÇ²¹Ş¾Æ ¼­Ä¡ ÇÔ¼ö·Î ³Ñ°ÜÁØ´Ù.
-
-	fclose(pFile);          //close file  //Á¾·á½Ã°£ ´ÜÃàÀ» À§ÇØ ÁÖ¼®Ã³¸®
+	fclose(fp);
 	return 0;
 }
 
-void make_clean_tree(Node** h, int tmp)
+void make_linked_list(Node** h)
 {
-	*h = (Node*)malloc(sizeof(Node)); // Çìµå¸¦ Node*ÇüÀ¸·Î µ¿Àû ¸Ş¸ğ¸® ÇÒ´ç 
-	(*h)->right = *h; // Çìµå³ëµå ¿À¸¥ÂÊ ÁöÁ¤Àº Çìµå 
-	(*h)->key = -52; // Çìµå³ëµå Å°°ª ÀÓÀÇ ÁöÁ¤ 	
-
-	Node* n = (Node*)malloc(sizeof(Node));
-	n->key = tmp;
-	n->left = NULL;
-	n->right = NULL;
-
-	(*h)->left = n;
+	*h = (Node*)malloc(sizeof(Node)); // í—¤ë“œë¥¼ Node*í˜•ìœ¼ë¡œ ë™ì  ë©”ëª¨ë¦¬ í• ë‹¹ 
+	(*h)->link = *h;
+	(*h)->key = -52; // í—¤ë“œë…¸ë“œ í‚¤ê°’ ì„ì˜ ì§€ì • 	
 }
 
-void insert_node_small_root(Node* h, int tmp)
+int check_linked_list(Node* h, long long tmp)
 {
-	Node* n = (Node*)malloc(sizeof(Node));
-	n->key = tmp;
-	n->left = NULL;
-	n->right = NULL;
-	// tmpÀÇ Å°°ªÀ» °¡Áö´Â ³ëµå ½Å±Ô »ı¼º ÈÄ left, right´Â ÃÊ±âÈ­
-
-	Node* p = h->left; // ¿¬»êÀ» À§ÇØ ³ëµå À§Ä¡ Å½»ö¿ë
-
-	while (1) // break°¡ ³ª¿Ã ¶§ ±îÁö ¹İº¹
+	Node* p = h->link;
+	while(1)
 	{
-		if (n->key > p->key) // ÀÎÇ²¹ŞÀº °ªÀÌ p °ªº¸´Ù Å« °æ¿ì
+		if(p->key == tmp)
 		{
-			if (p->right == NULL) // pÀÇ right°¡ ºñ¾ú´Ù¸é p->right°¡ nÀ» °¡¸£Å°°Ô ÇÑ ÈÄ Á¾·á
-			{
-				p->right = n;
-				return;
-			}
-			else // ºñ¾îÀÖÁö ¾Ê´Ù¸é ÇöÀç Å½»öÁßÀÎ À§Ä¡¸¦ p->right·Î º¯°æ ÈÄ ¹İº¹
-				p = p->right;
+			aaa++;
+			printf("\t%d",aaa);
+			return 0;
+			
 		}
-
-		else if (n->key < p->key)// pÀÇ left°¡ ºñ¾ú´Ù¸é p->left°¡ nÀ» °¡¸£Å°°Ô ÇÑ ÈÄ Á¾·á
+		if (p->link != NULL)
 		{
-			if (p->left == NULL)
-			{
-				p->left = n;
-				return;
-			}
-			else // ºñ¾îÀÖÁö ¾Ê´Ù¸é ÇöÀç Å½»öÁßÀÎ À§Ä¡¸¦ p->left·Î º¯°æ ÈÄ ¹İº¹
-				p = p->left;
+			p = p->link;
 		}
-		else if (n->key == p->key)
-			return;
-		//printf("Áßº¹µÈ °ªÀÌ Á¸ÀçÇÕ´Ï´Ù.\n");
-	}
-	return;
-}
-void insert_node_big_root(Node* h, int tmp)
-{
-	Node* n = (Node*)malloc(sizeof(Node));
-	n->key = tmp;
-	n->left = NULL;
-	n->right = NULL;
-	// tmpÀÇ Å°°ªÀ» °¡Áö´Â ³ëµå ½Å±Ô »ı¼º ÈÄ left, right´Â ÃÊ±âÈ­
-
-	Node* p = h->left; // ¿¬»êÀ» À§ÇØ ³ëµå À§Ä¡ Å½»ö¿ë
-
-	while (1) // break°¡ ³ª¿Ã ¶§ ±îÁö ¹İº¹
-	{
-		if (n->key < p->key) // pÀÇ left°¡ ºñ¾ú´Ù¸é p->left°¡ nÀ» °¡¸£Å°°Ô ÇÑ ÈÄ Á¾·á
+		else
 		{
-			if (p->left == NULL)
-			{
-				p->left = n;
-				return;
-			}
-			else // ºñ¾îÀÖÁö ¾Ê´Ù¸é ÇöÀç Å½»öÁßÀÎ À§Ä¡¸¦ p->left·Î º¯°æ ÈÄ ¹İº¹
-				p = p->left;
+			printf("\t");
+			return 1;
 		}
-
-		else if (n->key > p->key) // ÀÎÇ²¹ŞÀº °ªÀÌ p °ªº¸´Ù Å« °æ¿ì
-		{
-			if (p->right == NULL) // pÀÇ right°¡ ºñ¾ú´Ù¸é p->right°¡ nÀ» °¡¸£Å°°Ô ÇÑ ÈÄ Á¾·á
-			{
-				p->right = n;
-				return;
-			}
-			else // ºñ¾îÀÖÁö ¾Ê´Ù¸é ÇöÀç Å½»öÁßÀÎ À§Ä¡¸¦ p->right·Î º¯°æ ÈÄ ¹İº¹
-				p = p->right;
-		}
-		else if (n->key == p->key)
-			return;
-		//printf("Áßº¹µÈ °ªÀÌ Á¸ÀçÇÕ´Ï´Ù.\n");
+		
 	}
 }
-
-void search(Node* h, int tmp)
+void insert_linked_list(Node* h, long long tmp)
 {
-	Node* p = h->left; // ¿¬»êÀ» À§ÇØ ³ëµå À§Ä¡ Å½»ö¿ë
+	if (h->link == h)
+	{
+		Node* n = (Node*)malloc(sizeof(Node));
+		n->key = tmp;
+		n->link = NULL;
+		h->link = n;
+		node_cnt++;
+		return;
+	}
 
+	if (check_linked_list(h, tmp) != 1)
+		return;
+		
+	Node* p = h->link;
+		
 	while (1)
-	{
-		double start, end; // ½ÇÇà½Ã°£ ÃøÁ¤¿ë
-		start = (double)clock() / CLOCKS_PER_SEC; // ½ÇÇà½Ã°£ ÃøÁ¤¿ë
-
-		if (p->key == tmp) // Å½»öÀ» ¼º°øÇßÀ» °æ¿ì ¸Ş¼¼Áö Ãâ·Â ÈÄ Á¾·á
+	{	
+		while (1)
 		{
-			printf("%d°¡ Á¸ÀçÇÕ´Ï´Ù.\n", p->key);
-			end = (((double)clock()) / CLOCKS_PER_SEC); // ½ÇÇà½Ã°£ ÃøÁ¤¿ë
-			printf("ÇÁ·Î±×·¥ ¼öÇà ½Ã°£ :%lf\n", (end - start)); // ½ÇÇà½Ã°£ ÃøÁ¤¿ë
-			return;
+			if (p->link != NULL)
+				p = p->link;
+			else
+				break;
 		}
-
-		if (tmp > p->key) //tmp°¡ ÇöÀç Å½»öÁßÀÎ pÀÇ Å°°ªº¸´Ù Å¬ °æ¿ì ÇöÀç Å½»ö À§Ä¡¸¦ p->right·Î ÀÌµ¿ ÈÄ ¹İº¹
-		{
-			p = p->right;
-		}
-
-		else if (tmp < p->key) //tmp°¡ ÇöÀç Å½»öÁßÀÎ pÀÇ Å°°ªº¸´Ù ÀÛÀ» °æ¿ì ÇöÀç Å½»ö À§Ä¡¸¦ p->left·Î ÀÌµ¿ ÈÄ ¹İº¹
-		{
-			p = p->left;
-		}
-
-		if ((p->right == NULL) && (p->left == NULL) && (p->key != tmp)) // ÇöÀç Å½»öÁßÀÎ À§Ä¡ÀÎ p¿¡¼­ key°ªÀÌ tmp¿Í ÀÏÄ¡ÇÏÁö ¾Ê°í, ÀÚ½Ä³ëµå°¡ ¾øÀ»°æ¿ì ¿À·ù¸Ş¼¼Áö Ãâ·Â ÈÄ Á¾·á
-		{
-			printf("%d°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.\n", tmp);
-			end = (((double)clock()) / CLOCKS_PER_SEC); // ½ÇÇà½Ã°£ ÃøÁ¤¿ë
-			printf("ÇÁ·Î±×·¥ ¼öÇà ½Ã°£ :%lf\n", (end - start)); // ½ÇÇà½Ã°£ ÃøÁ¤¿ë
-			return;
-		}
+		Node* n = (Node*)malloc(sizeof(Node));
+		n->key = tmp;
+		n->link = NULL;
+		p->link = n;
+		node_cnt++;
+		return;
 	}
 }
