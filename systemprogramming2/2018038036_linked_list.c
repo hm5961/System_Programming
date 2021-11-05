@@ -1,7 +1,5 @@
 #include<stdio.h>
 #include <stdlib.h>
-#pragma warning(disable:4996)
-#pragma warning(disable:6011)
 
 typedef struct node {
 	long long key;
@@ -14,8 +12,6 @@ void insert_linked_list(Node* h, long long key);
 
 int over_Fk = 0;
 int node_cnt = 0;
-int aaa = 0;
-int bbb = 0;
 
 int main(void)
 {
@@ -37,17 +33,12 @@ int main(void)
 	long long Fk = 5000;
 	while (1)
 	{
-		if (fscanf_s(fp, "%lld", &intTemp) == EOF)
+		if (fscanf(fp, "%lld", &intTemp) == EOF)
 			break;
-		printf("%lld", intTemp);
 		insert_linked_list(head, intTemp);
 		
 		if (intTemp > Fk)
 			over_Fk++;
-		printf("\t%d", node_cnt);
-		printf("\t%d", over_Fk);
-		count++;
-		printf("\t%d\n", count);
 		
 	}
 	printf("The total number of nodes: %d\n", node_cnt);
@@ -71,8 +62,6 @@ int check_linked_list(Node* h, long long tmp)
 	{
 		if(p->key == tmp)
 		{
-			aaa++;
-			printf("\t%d",aaa);
 			return 0;
 			
 		}
@@ -82,7 +71,6 @@ int check_linked_list(Node* h, long long tmp)
 		}
 		else
 		{
-			printf("\t");
 			return 1;
 		}
 		
