@@ -25,17 +25,16 @@ int main(void)
 	{
 		printf("File does not exist");
 		return 0;
-	} //파일 없을 시 종료
+	}
 
 
-	long long intTemp = -1; // 텍스트 파일에서 정수를 임시저장 후 넘겨주는 변수
-	Node* head = NULL; // 헤드노드
+	long long intTemp = -1; 
+	Node* head = NULL;
 
 	make_linked_list(&head);
 
 	int count = 0;
 	long long Fk = 5000;
-	//int preTemp = 0;
 	while (1)
 	{
 		if (fscanf_s(fp, "%lld", &intTemp) == EOF)
@@ -60,9 +59,9 @@ int main(void)
 
 void make_linked_list(Node** h)
 {
-	*h = (Node*)malloc(sizeof(Node)); // 헤드를 Node*형으로 동적 메모리 할당 
+	*h = (Node*)malloc(sizeof(Node));
 	(*h)->link = *h;
-	(*h)->key = -52; // 헤드노드 키값 임의 지정 	
+	(*h)->key = -52;	
 }
 
 int check_linked_list(Node* h, long long tmp)
